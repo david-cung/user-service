@@ -7,6 +7,8 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { CreateUserResDto } from './dto/response';
 import { UpdateUserDto } from './dto/request/update-user.dto';
+import { LoginResDto } from './dto/response/login-res.dto';
+import { LoginDto } from './dto/request/login.dto';
 
 @Controller()
 export class UserConsumer {
@@ -20,5 +22,10 @@ export class UserConsumer {
   @MessagePattern('update_user')
   async handleUserUpdated(message: UpdateUserDto): Promise<CreateUserResDto> {
     return this.userService.updateUser(message);
+  }
+
+  @MessagePattern('login_user')
+  async login(message: LoginDto): Promise<LoginResDto> {
+    return this.userService.login(message);
   }
 }

@@ -10,4 +10,4 @@ import { User } from 'src/entity';
   controllers: [UserConsumer], // Di chuyển vào đây
   providers: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

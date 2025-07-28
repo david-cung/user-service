@@ -1,10 +1,8 @@
 {
   "singleQuote": true,
   "trailingComma": "all",
-  "parser": "flow",
   "endOfLine": "auto",
   "semi": true,
   "tabWidth": 2,
-  "useTabs": false,
-   "require-await": "off"
+  "useTabs": false
 }
