@@ -1,12 +1,30 @@
-/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/entity';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import { CreateUserResDto } from './dto/response';
+import { plainToInstance } from 'class-transformer';
+import { CreateUserDto } from './dto/request/create-user.dto';
+import { UpdateUserDto } from './dto/request/update-user.dto';
 
 @Injectable()
 export class UserService {
-  async createUser(data: { name: string; email: string }) {
-    console.log('Creating user:', data);
-    // Thực tế bạn sẽ lưu vào DB ở đây
-    return {message: 'created user'}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) { }
+
+  async createUser(data: CreateUserDto): Promise<CreateUserResDto> {
+    const id = uuidv4();
+    await this.userRepository.insert(data);
+    return plainToInstance(CreateUserResDto, { id });
+  }
+
+  async updateUser(data: UpdateUserDto): Promise<CreateUserResDto> {
+
+    await this.userRepository.update({ id: data.id }, data);
+    return { id: data.id };
   }
 }
