@@ -9,12 +9,12 @@ import { UserService } from './user.service';
 export class UserConsumer {
   constructor(private readonly userService: UserService) { }
 
-  @MessagePattern('user.created')
+  @MessagePattern('create_user')
   async handleUserCreated(@Payload() message: any) {
     // const rawValue = message?.value?.toString(); // Buffer → string
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     // const data = JSON.parse(rawValue);
     console.log('Received user.created:', message);
-    await this.userService.createUser(message.period);
+    return this.userService.createUser(message.period);
   }
 }
