@@ -24,8 +24,5 @@ export class UserConsumer {
     return this.userService.updateUser(message);
   }
 
-  @MessagePattern('login_user')
-  async login(message: LoginDto): Promise<LoginResDto> {
-    return this.userService.login(message);
-  }
+  
 }

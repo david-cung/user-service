@@ -9,5 +9,6 @@ import { User } from 'src/entity';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserConsumer], // Di chuyển vào đây
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

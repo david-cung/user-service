@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entity';
 import { Repository } from 'typeorm';
@@ -8,8 +8,8 @@ import { CreateUserResDto } from './dto/response';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
-import { LoginDto } from './dto/request/login.dto';
-import { LoginResDto } from './dto/response/login-res.dto';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,8 @@ export class UserService {
 
   async createUser(data: CreateUserDto): Promise<CreateUserResDto> {
     const id = uuidv4();
-    await this.userRepository.insert(data);
+    const hashPassword = await bcrypt.hash(data.password, 10);
+    await this.userRepository.insert({...data, password: hashPassword});
     return plainToInstance(CreateUserResDto, { id });
   }
 
@@ -29,16 +30,7 @@ export class UserService {
     return { id: data.id };
   }
 
-  async login(data: LoginDto): Promise<LoginResDto> {
-    const checkUserExist = await this.userRepository.findOne({
-      where: {
-        email: data.email,
-        password: data.password,
-      },
-    });
-    if (checkUserExist) {
-      return { message: 'Login success' }; 
-    }
-    return { message: 'Login failed.' };
+  findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }
