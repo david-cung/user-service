@@ -1,15 +1,24 @@
+import './tracing';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,
+    {
+       bufferLogs: true,
+    }
+  );
+
+  const logger = new Logger('Bootstrap');
+  app.useLogger(logger);
 
   // Cấu hình TCP
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '127.0.0.1',
+      host: '0.0.0.0',
       port: 3001,
     },
   });
@@ -20,7 +29,7 @@ async function bootstrap() {
     options: {
       client: {
         clientId: 'user-service',
-        brokers: ['localhost:9092'],
+        brokers: ['kafka:9093'],
       },
       consumer: {
         groupId: 'user-consumer-group',
@@ -31,5 +40,6 @@ async function bootstrap() {
   // Khởi động tất cả microservices
   await app.startAllMicroservices();
   await app.listen(3030);
+  console.log(`User Service is running on: 3030`);
 }
 bootstrap();

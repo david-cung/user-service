@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { TypeOrmOtelLogger } from './src/typeorm-otel-logger';
 dotenv.config({ path: '../.env' });
+
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,4 +14,5 @@ export const AppDataSource = new DataSource({
   entities: ['../src/**/*.entity.ts'],
   migrations: ['../migrations/**/*.ts'],
   synchronize: false,
+  logger: new TypeOrmOtelLogger(),
 });

@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import {jwtConfig} from './config/auth.config';
+import { AppLogger } from './logger.service';
+import { TypeOrmOtelLogger } from './typeorm-otel-logger';
 
 
 @Module({
@@ -25,13 +27,14 @@ import {jwtConfig} from './config/auth.config';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        host: config.get('DB_HOST'),
+        host: config.get('DB_HOST') ?? 'localhost', 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         port: +(config.get<number>('DB_PORT') ?? 5432),
         username: config.get('DB_USERNAME') ?? 'postgres',
         password: config.get('DB_PASSWORD') ?? 'password',
         database: config.get('DB_DATABASE') ?? 'mydb',
-
+        logging: true,
+        logger: new TypeOrmOtelLogger(),
         autoLoadEntities: true,
         synchronize: true,
       }),
@@ -41,6 +44,6 @@ import {jwtConfig} from './config/auth.config';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppLogger],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ import { plainToInstance } from 'class-transformer';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { AppLogger } from '@/logger.service';
 
 
 @Injectable()
@@ -16,9 +17,16 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly logger: AppLogger
   ) {}
 
   async createUser(data: CreateUserDto): Promise<CreateUserResDto> {
+     this.logger.error(
+        `❌ Failed login attempt`,
+        `Invalid credentials: username=${data}`,
+        'AuthService',
+        401, // unauthorized
+      );
     const id = uuidv4();
     const hashPassword = await bcrypt.hash(data.password, 10);
     await this.userRepository.insert({...data, password: hashPassword});
