@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/entity';
 import { UserModule } from '@/user/user.module';
+import { AppLogger } from '@/logger.service';
 
 @Global()
 @Module({
@@ -24,7 +25,7 @@ import { UserModule } from '@/user/user.module';
     }),
     UserModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, Logger],
+  providers: [AuthService, LocalStrategy, JwtStrategy, AppLogger],
   controllers: [AuthController],
   exports: [JwtModule],
 })
